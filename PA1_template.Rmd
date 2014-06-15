@@ -6,7 +6,6 @@
 df <- read.csv("activity.csv")
 library(plyr)
 library(ggplot2)
-library(reshape2)
 ```
 
 ## What is mean total number of steps taken per day?
@@ -14,7 +13,7 @@ library(reshape2)
 df1 <- ddply(df, .(date), summarise, total = sum(steps, na.rm=T))
 df1_mean <- mean(df1$total)
 df1_median <- median(df1$total)
-ggplot(df1, aes(x=as.Date(date), y=total)) +geom_bar(stat="identity")
+ggplot(df1, aes(x=as.Date(date), y=total)) +geom_bar(stat="identity") + xlab("date")
 ```
 
 The mean total number of steps taken per day is `r df1_mean` and the median is `r df1_median`
@@ -39,7 +38,7 @@ totalNA <- sum(is.na(df[,1]))
 
 #Using mean of all the data to replace NA
 
-df_new <-df
+df_new <-df # create a new data frame same as df
 df_new$steps[is.na(df_new$step)] <- mean(df_new$steps, na.rm=T)
 
 
@@ -47,8 +46,8 @@ df_new$steps[is.na(df_new$step)] <- mean(df_new$steps, na.rm=T)
 df3_sum <- ddply(df_new, .(date), summarise, totalsteps = sum(steps, na.rm=T))
 df3_mean <- mean(df3_sum$totalsteps)
 df3_median <- median(df3_sum$totalsteps)
-
-ggplot(df3_sum, aes(x=as.Date(date), y=totalsteps)) + geom_bar(stat="identity") 
+# Plot the graphic
+ggplot(df3_sum, aes(x=as.Date(date), y=totalsteps)) + geom_bar(stat="identity") + xlab("date") 
 
 ```
 The total NA in data set is `r totalNA`. The mean total number of steps taken per day is `r df3_mean` and the median is `r df3_median`. They are different than old data set.

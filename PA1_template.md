@@ -7,7 +7,6 @@
 df <- read.csv("activity.csv")
 library(plyr)
 library(ggplot2)
-library(reshape2)
 ```
 
 ## What is mean total number of steps taken per day?
@@ -27,3 +26,4 @@ The total NA in data set is 2304. The mean total number of steps taken per day i
 ## Are there differences in activity patterns between weekdays and weekends?
 
 <img src="figure/unnamed-chunk-5.png" title="plot of chunk unnamed-chunk-5" alt="plot of chunk unnamed-chunk-5" style="display: block; margin: auto;" />
+The patterns are slightly differnt. See the figures.
