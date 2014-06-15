@@ -1,20 +1,71 @@
 # Reproducible Research: Peer Assessment 1
 
-
 ## Loading and preprocessing the data
 
-
+```{r, warning=FALSE, }
+df <- read.csv("activity.csv")
+library(plyr)
+library(ggplot2)
+library(reshape2)
+```
 
 ## What is mean total number of steps taken per day?
+```{r, echo=FALSE, warning=FALSE, fig.align='center', fig.height=6, fig.width=8}
+df1 <- ddply(df, .(date), summarise, total = sum(steps, na.rm=T))
+df1_mean <- mean(df1$total)
+df1_median <- median(df1$total)
+ggplot(df1, aes(x=as.Date(date), y=total)) +geom_bar(stat="identity")
+```
 
-
+The mean total number of steps taken per day is `r df1_mean` and the median is `r df1_median`
 
 ## What is the average daily activity pattern?
+```{r, echo=FALSE, warning=FALSE, fig.align='center', fig.height=6, fig.width=8}
+df2 <- ddply(df, .(date), mutate, average = mean(steps, na.rm=T))
+ggplot(df2,aes(x=as.Date(date), y=average)) + geom_line() + xlab("Time") + ylab("Average Step per Day")
 
+df1_max <-df1[df1$total == max(df1$total), ]
+df1_max_date <- as.Date(df1_max[1,1])
+df1_max_step <- as.vector(df1_max[1,2])
 
+```
+The `r df1_max_date` contains the maxium steps `r df1_max_step`.
 
 ## Imputing missing values
 
+```{r, echo=FALSE, warning=FALSE, fig.align='center', fig.height=6, fig.width=8}
+# Count NA
+totalNA <- sum(is.na(df[,1])) 
 
+#Using mean of all the data to replace NA
+
+df_new <-df
+df_new$steps[is.na(df_new$step)] <- mean(df_new$steps, na.rm=T)
+
+
+# Calculate mean and median of the new data frame
+df3_sum <- ddply(df_new, .(date), summarise, totalsteps = sum(steps, na.rm=T))
+df3_mean <- mean(df3_sum$totalsteps)
+df3_median <- median(df3_sum$totalsteps)
+
+ggplot(df3_sum, aes(x=as.Date(date), y=totalsteps)) + geom_bar(stat="identity") 
+
+```
+The total NA in data set is `r totalNA`. The mean total number of steps taken per day is `r df3_mean` and the median is `r df3_median`. They are different than old data set.
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+```{r, echo=FALSE, warning=FALSE, fig.align='center', fig.height=6, fig.width=8}
+
+df_new$date <-weekdays(as.Date(df_new$date))
+df_new$date <- ifelse(df_new$date =="Saturday"|df_new$date =="Sunday", 
+                      "Weekend", "workday")
+
+df_new$interval <-as.factor(df_new$interval)
+df4 <-ddply(df_new, .(interval, date), 
+            summarise, steps=mean(steps))
+ggplot(df4, aes(x = interval, y = steps, group=date)) + 
+    geom_line() + 
+    facet_wrap(~date, nrow=2) + 
+    scale_x_discrete(breaks=c(0, 500, 1000, 1500, 2000)) 
+```
