@@ -69,3 +69,4 @@ ggplot(df4, aes(x = interval, y = steps, group=date)) +
     facet_wrap(~date, nrow=2) + 
     scale_x_discrete(breaks=c(0, 500, 1000, 1500, 2000)) 
 ```
+The patterns are slightly differnt. See the figures.
